@@ -10,11 +10,6 @@ interpreter.  It was originally based on
 
 ![](http://i.imgur.com/frOLFFI.gif)
 
-If you are using Vim8 or NeoVim, you can use the native Terminal feature instead
-of tmux. Read the Configuration section on how to enable it.
-
-[![asciicast](https://asciinema.org/a/224891.svg)](https://asciinema.org/a/224891)
-
 ## Getting Started ##
 
 1. Start livecoding with Vim by simply running:
@@ -41,103 +36,10 @@ of tmux. Read the Configuration section on how to enable it.
 
 Make sure you have TidalCycles installed, with SuperDirt running. See [the Tidal wiki](https://tidalcycles.org/index.php/Userbase) for more information.
 
+
 ### Install tmux ###
-
-#### Ubuntu/Debian ####
-
-You can install it from the main repos:
-
-    $ sudo apt-get install tmux
-
-#### OSX ####
-
-    $ brew install tmux
-
-#### Windows ####
-
-There seems to be [a Cygwin package for
-tmux](https://cygwin.com/cgi-bin2/package-cat.cgi?file=x86%2Ftmux%2Ftmux-1.9a-1&grep=tmux),
-but at present it is [not working](https://github.com/microsoft/terminal/issues/5132#issuecomment-604560893) with any known terminal emulator for Windows. As such, this plugin has only been tested with the *Windows native* build of [Neovim](https://github.com/tidalcycles/vim-tidal#neovim-terminal-target).
-
-
-### Install plugin ###
-
-I recommend using a Vim plugin manager like
-[Plug](https://github.com/junegunn/vim-plug).  Check the link for instructions
-on installing and configuring.  If you don't want a plugin manager, you can
-also download the latest release
-[here](https://github.com/tidalcycles/vim-tidal/releases) and extract the
-contents on your Vim directory (usually `~/.vim/`).
-
-For example, with Plug you need to:
-
-  * Edit your `.vimrc` file and add these lines:
-
-```vim
-Plug 'tidalcycles/vim-tidal'
-```
-
-  * Restart Vim and execute `:PlugInstall` to automatically download and
-    install the plugins.
-
-#### UNIX-based Systems ####
-
-If you are on a UNIX-based operating system (Linux distributions, MacOS, etc.), go to the plugin repository and run `make install`:
-
-(if you are using NeoVim and you won't run tmux then you don't need to run `make install` to be able to load the plugin inside NeoVim)
-
-    $ cd ~/.vim/plugged/vim-tidal
-    $ sudo make install
-
-This creates symlinks on `/usr/local/bin` for `tidal` and `tidalvim` scripts.
-You can remove them later if you want with `make uninstall`.
-
-#### Windows ####
-
-:warning: **This plugin has only been tested on Windows 10 using Neovim >0.5**
-
-If you are on Windows, add the `vim-tidal\bin` directory to your `PATH` user environment variable:
-
-    1. Click the `Start` button
-    2. Type "Edit the system environment variables" and hit `enter` or click on the search result
-    3. Click the button labeled `Environment variables...`
-    4. In the `User variables for [username]` table, click the entry for the `Path` variable, followed by the `Edit...` button beneath the same table
-    5. Click the `New` button in the following dialog, enter the *full path* to the `vim-tidal\bin` directory, and click `OK` until all the preceding dialogs are closed.
-
-Note: The full path to the `vim-tidal\bin` directory, will look something like `C:\Users\[username]\AppData\Local\nvim\plugged\vim-tidal\bin`, assuming you are using vim-plug as this document recommends.
-
-#### Final Installation Note ####
-
-Make sure to have the `filetype plugin on` setting on your .vimrc, otherwise
-plugin won't be loaded when opening a .tidal file.
-
-### Older Tidal versions (pre 1.0) ###
-
-Tidal 1.0 introduces some breaking changes, so if haven't upgraded yet, you can
-still use this plugin with an older version. Just point your Plug entry to use
-the `tidal-0.9` branch.
-
-First change your Plug line on your `.vimrc` to:
-
-```vim
-Plug 'tidalcycles/vim-tidal', {'branch': 'tidal-0.9'}
-```
-
-Then on Vim run `:PlugInstall` to update your plugin.
-
-
-## Usage
-
-This plugin comes bundled with two Bash scripts: `tidalvim` and `tidal`.
-
-### `tidalvim`
-
-`tidalvim` starts a tmux session with the screen horizontally splitted, having
-Vim on the upper pane and the Tidal interpreter on the lower pane.  This is the
-simplest way to start using Tidal with Vim.
-
-You don't have to use `tidalvim` necessarily. If you have a more complex setup
-or just want to use Vim outside of tmux, you can use `tidal`.  See below.
+### Install Vimux ###
+### Install plugin manager ###
 
 ### `tidal`
 
