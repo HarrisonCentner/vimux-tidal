@@ -107,34 +107,16 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  let l:prefix = "tmux -L " . shellescape(a:config["socket_name"])
+  let l:prefix = 'VimuxRunCommand("'
   " use STDIN unless configured to use a file
-  if !exists("g:tidal_paste_file")
-    call system(l:prefix . " load-buffer -", a:text)
-  else
-    call s:WritePasteFile(a:text)
-    call system(l:prefix . " load-buffer " . g:tidal_paste_file)
-  end
-  call system(l:prefix . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+" if !exists("g:tidal_paste_file")
+"   call system(l:prefix . " load-buffer -", a:text)
+" else
+"   call s:WritePasteFile(a:text)
+"   call system(l:prefix . " load-buffer " . g:tidal_paste_file)
+" end
+  call system(l:prefix . a:text . '")')
 endfunction
-
-function! s:TmuxPaneNames(A,L,P)
-  let format = '#{pane_id} #{session_name}:#{window_index}.#{pane_index} #{window_name}#{?window_active, (active),}'
-  return system("tmux -L " . shellescape(b:tidal_config['socket_name']) . " list-panes -a -F " . shellescape(format))
-endfunction
-
-function! s:TmuxConfig() abort
-  if !exists("b:tidal_config")
-    let b:tidal_config = {"socket_name": "default", "target_pane": ":"}
-  end
-
-  let b:tidal_config["socket_name"] = input("tmux socket name: ", b:tidal_config["socket_name"])
-  let b:tidal_config["target_pane"] = input("tmux target pane: ", b:tidal_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
-  if b:tidal_config["target_pane"] =~ '\s\+'
-    let b:tidal_config["target_pane"] = split(b:tidal_config["target_pane"])[0]
-  endif
-endfunction
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Terminal
@@ -145,62 +127,9 @@ let s:tidal_term_sc = -1
 
 " NVim and VIM8 Terminal Implementation
 " =====================================
+" TODO: change to be just a tmux call
 function! s:TerminalOpen()
-  if has('nvim')
-    let current_win = winnr()
-
-    if s:tidal_term_ghci == -1
-        " force terminal split to open below current pane
-        :exe "set splitbelow"
-        execute "split term://" . g:tidal_ghci . " -ghci-script=" . g:tidal_boot
-        let s:tidal_term_ghci = b:terminal_job_id
-
-        " Give tidal a moment to start up so following commands can take effect
-        sleep 500m
-
-        " Make terminal scroll to follow output
-        :exe "normal G"
-        :exe "normal 10\<c-w>_"
-    endif
-
-    if g:tidal_sc_enable == 1 && s:tidal_term_sc == -1
-        execute "vsplit term://" . g:tidal_sc_boot_cmd
-        let s:tidal_term_sc = b:terminal_job_id
-
-        " Make terminal scroll to follow output
-        :exe "normal G"
-    endif
-
-    execute current_win .. "wincmd w"
-  elseif has('terminal')
-    " Keep track of the current window number so we can switch back.
-    let current_win = winnr()
-
-    " Open a Terminal with GHCI with tidal booted.
-    if s:tidal_term_ghci == -1
-      execute "below split"
-      let s:tidal_term_ghci = term_start((g:tidal_ghci . " -ghci-script=" . g:tidal_boot), #{
-            \ term_name: 'tidal',
-            \ term_rows: 10,
-            \ norestore: 1,
-            \ curwin: 1,
-            \ })
-    endif
-
-    " Open a terminal with supercollider running.
-    if g:tidal_sc_enable == 1 && s:tidal_term_sc == -1
-      execute "vert split"
-      let s:tidal_term_sc = term_start(g:tidal_sc_boot_cmd, #{
-           \ term_name: 'supercollider',
-           \ term_rows: 10,
-           \ norestore: 1,
-           \ curwin: 1,
-           \ })
-    endif
-
-    " Return focus to the original window.
-    execute current_win .. "wincmd w"
-  endif
+  call "VimuxRunCommand('tidal')"
 endfunction
 
 function! s:TerminalSend(config, text)
@@ -368,6 +297,7 @@ function! s:TidalConfig() abort
 endfunction
 
 " delegation
+" determines if we send via tmux or terminal
 function! s:TidalDispatch(name, ...)
   let target = substitute(tolower(g:tidal_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
