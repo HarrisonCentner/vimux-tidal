@@ -29,11 +29,7 @@ function s:FindScBoot()
 endfunction
 
 if !exists("g:tidal_target")
-  if has('nvim') || has('terminal')
-    let g:tidal_target = "terminal"
-  else
     let g:tidal_target = "tmux"
-  endif
 endif
 
 if !exists("g:tidal_paste_file")
@@ -107,7 +103,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  let l:prefix = 'VimuxRunCommand("'
+  let l:prefix = "VimuxRunCommand('"
   " use STDIN unless configured to use a file
 " if !exists("g:tidal_paste_file")
 "   call system(l:prefix . " load-buffer -", a:text)
@@ -115,7 +111,7 @@ function! s:TmuxSend(config, text)
 "   call s:WritePasteFile(a:text)
 "   call system(l:prefix . " load-buffer " . g:tidal_paste_file)
 " end
-  call system(l:prefix . a:text . '")')
+  call system(l:prefix . a:text . "')")
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -134,17 +130,13 @@ endfunction
 
 function! s:TerminalSend(config, text)
   call s:TerminalOpen()
-  if has('nvim')
-    call jobsend(s:tidal_term_ghci, a:text . "\<CR>")
-  elseif has('terminal')
-    call term_sendkeys(s:tidal_term_ghci, a:text . "\<CR>")
-  endif
-endfunction
-
-" These two are unnecessary AFAIK.
-function! s:TerminalPaneNames(A,L,P)
-endfunction
-function! s:TerminalConfig() abort
+  let l:prefix = "VimuxRunCommand('"
+  call system(l:prefix . a:text . "')")
+" if has('nvim')
+"   call jobsend(s:tidal_term_ghci, a:text . "\<CR>")
+" elseif has('terminal')
+"   call term_sendkeys(s:tidal_term_ghci, a:text . "\<CR>")
+" endif
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
