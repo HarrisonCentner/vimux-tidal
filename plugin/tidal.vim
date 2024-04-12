@@ -99,21 +99,6 @@ if filereadable(s:parent_path . "/.dirt-samples")
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tmux
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-function! s:TmuxSend(config, text)
-  execute "VimuxRunCommand('" . a:text . "')")
-endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Terminal
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-let s:tidal_term_ghci = -1
-let s:tidal_term_sc = -1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -249,9 +234,9 @@ endfunction
 
 function! s:TidalSend(text)
   call s:TidalGetConfig()
-  let pieces = a:text
+  let pieces = substitute(substitute(a:text, "\'", "\\'", "g"), "\"", "\\\"", "g")
   echo pieces
-  execute "VimuxRunCommand(':{\n" . pieces . "\n:}')"
+  execute "VimuxRunCommand(\":{\n" . pieces . "\n:}\")"
 "  for piece in pieces
 "  endfor
 endfunction
