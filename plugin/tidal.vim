@@ -234,7 +234,7 @@ endfunction
 
 function! s:TidalSend(text)
   call s:TidalGetConfig()
-  let pieces = substitute(substitute(a:text, "\'", "\\'", "g"), "\"", "\\\"", "g")
+  let pieces = a:text
   echo pieces
   execute "VimuxRunCommand(\":{\n" . pieces . "\n:}\")"
 "  for piece in pieces
