@@ -103,15 +103,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  let l:prefix = "VimuxRunCommand('"
-  " use STDIN unless configured to use a file
-" if !exists("g:tidal_paste_file")
-"   call system(l:prefix . " load-buffer -", a:text)
-" else
-"   call s:WritePasteFile(a:text)
-"   call system(l:prefix . " load-buffer " . g:tidal_paste_file)
-" end
-  call system(l:prefix . a:text . "')")
+  execute "VimuxRunCommand('" . a:text . "')")
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -120,24 +112,6 @@ endfunction
 
 let s:tidal_term_ghci = -1
 let s:tidal_term_sc = -1
-
-" NVim and VIM8 Terminal Implementation
-" =====================================
-" TODO: change to be just a tmux call
-function! s:TerminalOpen()
-  call "VimuxRunCommand('tidal')"
-endfunction
-
-function! s:TerminalSend(config, text)
-  call s:TerminalOpen()
-  let l:prefix = "VimuxRunCommand('"
-  call system(l:prefix . a:text . "')")
-" if has('nvim')
-"   call jobsend(s:tidal_term_ghci, a:text . "\<CR>")
-" elseif has('terminal')
-"   call term_sendkeys(s:tidal_term_ghci, a:text . "\<CR>")
-" endif
-endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Helpers
@@ -178,7 +152,7 @@ function! s:TidalGetConfig()
     if exists("g:tidal_default_config")
       let b:tidal_config = g:tidal_default_config
     else
-      call s:TidalDispatch('Config')
+      execute 'VimuxRunCommand("tidal")'
     end
   end
 endfunction
@@ -275,32 +249,24 @@ endfunction
 
 function! s:TidalSend(text)
   call s:TidalGetConfig()
-
   let pieces = s:_EscapeText(a:text)
-  for piece in pieces
-    call s:TidalDispatch('Send', b:tidal_config, piece)
-  endfor
+  execute "VimuxRunCommand('" . pieces . "')"
+"  for piece in pieces
+"  endfor
 endfunction
 
 function! s:TidalConfig() abort
   call inputsave()
-  call s:TidalDispatch('Config')
+  execute 'VimuxRunCommand("tidal")'
   call inputrestore()
 endfunction
 
-" delegation
-" determines if we send via tmux or terminal
-function! s:TidalDispatch(name, ...)
-  let target = substitute(tolower(g:tidal_target), '\(.\)', '\u\1', '') " Capitalize
-  return call("s:" . target . a:name, a:000)
-endfunction
-
 function! s:TidalHush()
-  execute 'TidalSend1 hush'
+  execute 'VimuxRunCommand("hush")'
 endfunction
 
 function! s:TidalSilence(stream)
-  silent execute 'TidalSend1 d' . a:stream . ' silence'
+  silent execute 'VimuxRunCommand(' . a:stream . ' $ silence)'
 endfunction
 
 function! s:TidalPlay(stream)
