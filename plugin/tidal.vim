@@ -28,16 +28,8 @@ function s:FindScBoot()
   endfor
 endfunction
 
-if !exists("g:tidal_target")
-    let g:tidal_target = "tmux"
-endif
-
 if !exists("g:tidal_paste_file")
   let g:tidal_paste_file = tempname()
-endif
-
-if !exists("g:tidal_default_config")
-  let g:tidal_default_config = { "socket_name": "default", "target_pane": ":0.1" }
 endif
 
 if !exists("g:tidal_preserve_curpos")
@@ -111,35 +103,8 @@ function! s:WritePasteFile(text)
   call system("cat > " . g:tidal_paste_file, a:text)
 endfunction
 
-function! s:_EscapeText(text)
-  if exists("&filetype")
-    let custom_escape = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
-    if exists("*" . custom_escape)
-      let result = call(custom_escape, [a:text])
-    end
-  end
-
-  " use a:text if the ftplugin didn't kick in
-  if !exists("result")
-    let result = a:text
-  end
-
-  " return an array, regardless
-  if type(result) == type("")
-    return [result]
-  else
-    return result
-  end
-endfunction
-
 function! s:TidalGetConfig()
-  if !exists("b:tidal_config")
-    if exists("g:tidal_default_config")
-      let b:tidal_config = g:tidal_default_config
-    else
-      execute 'VimuxRunCommand("tidal")'
-    end
-  end
+  execute 'VimuxRunCommand("tidal")'
 endfunction
 
 function! s:TidalFlashVisualSelection()
@@ -249,7 +214,7 @@ function! s:TidalHush()
 endfunction
 
 function! s:TidalSilence(stream)
-  silent execute 'VimuxRunCommand(' . a:stream . ' $ silence)'
+  silent execute 'VimuxRunCommand("' . a:stream . ' $ silence")'
 endfunction
 
 function! s:TidalPlay(stream)
