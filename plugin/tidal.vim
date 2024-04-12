@@ -250,7 +250,7 @@ endfunction
 function! s:TidalSend(text)
   call s:TidalGetConfig()
   let pieces = s:_EscapeText(a:text)
-  execute "VimuxRunCommand('" . pieces . "')"
+  execute "VimuxRunCommand('" . join(pieces) . "')"
 "  for piece in pieces
 "  endfor
 endfunction
