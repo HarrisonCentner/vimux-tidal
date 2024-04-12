@@ -251,7 +251,7 @@ function! s:TidalSend(text)
   call s:TidalGetConfig()
   let pieces = a:text
   echo pieces
-  execute "VimuxRunCommand('" . join(pieces) . "')"
+  execute "VimuxRunCommand(':{\n" . pieces . "\n}')"
 "  for piece in pieces
 "  endfor
 endfunction
